@@ -1,6 +1,7 @@
 const winston = require("winston");
 const config = require("./config");
 const path = require("path");
+const { timeStamp } = require("console");
 
 const enumerateErrorFormat = winston.format((info) => {
   if (info instanceof Error) {
@@ -18,11 +19,24 @@ const logger = winston.createLogger({
       ? winston.format.colorize()
       : winston.format.uncolorize(),
     winston.format.splat(),
-    winston.format.printf(({ level, message }) => `${level}: ${message}`)
+    winston.format.timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    winston.format.printf(
+      ({ level, message, timestamp, label }) =>
+        `${timestamp} : ${level} : ${message}`
+    )
   ),
   transports: [
     new winston.transports.Console({
+      timestamp: true,
       stderrLevels: ["error"],
+    }),
+    new winston.transports.File({
+      filename: "combined.log",
+      level: "info",
+    }),
+    new winston.transports.File({
+      filename: "error.log",
+      level: "error",
     }),
   ],
 });
