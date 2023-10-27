@@ -15,4 +15,7 @@ app.use(cors());
 // Define routes index in separate file.
 app.use("/", routes);
 
+// Parse urlencoded request body if provided with any of the requests
+app.use(express.urlencoded({ extended: true }));
+
 module.exports = app;
