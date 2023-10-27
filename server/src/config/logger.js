@@ -1,7 +1,6 @@
 //winston dependencies
-const { createLogger, format } = require("winston");
+const { createLogger, format, transports } = require("winston");
 const { combine, timestamp, splat, colorize, uncolorize, printf } = format;
-const { Console, File } = require("winston/lib/winston/transports");
 
 const config = require("./config");
 const path = require("path");
@@ -27,7 +26,7 @@ const logger = createLogger({
     )
   ),
   transports: [
-    new Console({
+    new transports.Console({
       stderrLevels: ["error"],
     }),
   ],

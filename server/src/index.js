@@ -7,19 +7,18 @@ const logger = require("./config/logger");
 let server;
 
 logger.warn("--------------------------------------");
-logger.info("Node Envoirenment : %s", config.env);
 
 // connect to database
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-  logger.info(`connected to MongoDB => ${config.mongoose.url}`);
-});
-
 server = app.listen(
   config.port,
   logger.info(`Node server listening on port => ${config.port}`)
 );
-logger.warn("--------------------------------------");
 
+mongoose.connect(config.mongoose.url, config.mongoose.options).then(()=>{
+  logger.info(`connected to MongoDB => ${config.mongoose.url}`);
+})
+
+logger.warn("--------------------------------------");
 
 // Manually close the server if an unhandled exception occurs
 const exitHandler = () => {
@@ -50,4 +49,3 @@ process.on("SIGTERM", () => {
     server.close();
   }
 });
-
