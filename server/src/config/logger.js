@@ -1,9 +1,12 @@
-const winston = require("winston");
+//winston dependencies
+const { createLogger, format } = require("winston");
+const { combine, timestamp, splat, colorize, uncolorize, printf } = format;
+const { Console, File } = require("winston/lib/winston/transports");
+
 const config = require("./config");
 const path = require("path");
-const { timeStamp } = require("console");
 
-const enumerateErrorFormat = winston.format((info) => {
+const enumerateErrorFormat = format((info) => {
   if (info instanceof Error) {
     console.log(info.stack);
     Object.assign(info, { message: info.stack });
@@ -11,32 +14,21 @@ const enumerateErrorFormat = winston.format((info) => {
   return info;
 });
 
-const logger = winston.createLogger({
+const logger = createLogger({
   level: config.env === "development" ? "debug" : "info",
-  format: winston.format.combine(
+  format: combine(
     enumerateErrorFormat(),
-    config.env === "development"
-      ? winston.format.colorize()
-      : winston.format.uncolorize(),
-    winston.format.splat(),
-    winston.format.timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
-    winston.format.printf(
+    config.env === "development" ? colorize() : uncolorize(),
+    splat(),
+    timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    printf(
       ({ level, message, timestamp, label }) =>
         `${timestamp} : ${level} : ${message}`
     )
   ),
   transports: [
-    new winston.transports.Console({
-      timestamp: true,
+    new Console({
       stderrLevels: ["error"],
-    }),
-    new winston.transports.File({
-      filename: "combined.log",
-      level: "info",
-    }),
-    new winston.transports.File({
-      filename: "error.log",
-      level: "error",
     }),
   ],
 });
