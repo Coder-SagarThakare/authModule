@@ -30,7 +30,6 @@ app.use("/", routes);
 
 // Send back a 404 error for any unknown api request
 app.use('*',(req, res, next) => {
-  // console.log("route", req);
   next(new ApiError(httpStatus.NOT_FOUND, `${req.baseUrl} URL NOT FOUND `));
 });
 
