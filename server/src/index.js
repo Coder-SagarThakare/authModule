@@ -23,7 +23,9 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(()=>{
 const exitHandler = () => {
   if (server) {
     server.close(() => {
+      logger.info('---------------------------------------------------')
       logger.info("Server closed");
+      logger.info('---------------------------------------------------')
       process.exit(1);
     });
   } else {

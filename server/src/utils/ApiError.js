@@ -10,6 +10,7 @@ class ApiError extends Error {
     this.statusCode = statusCode;
     this.isOperational = isOperational;
     if (stack) {
+        console.log('in API Error class ');
       this.stack = stack;
     } else {
       Error.captureStackTrace(this, this.constructor);

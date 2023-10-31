@@ -6,7 +6,8 @@ const routes = require("./routes");
 const config = require("./config/config");
 const authLimiter = require("./middlewares/rateLimiter");
 const ApiError = require("./utils/ApiError");
-const httpStatus = require('http-status')
+const httpStatus = require("http-status");
+const { errorConverter, errorHandler } = require("./middlewares/error");
 
 // ------------------  MIDDLEWARES  ----------------------------
 
@@ -28,9 +29,15 @@ if (config.env == "production") {
 app.use("/", routes);
 
 // Send back a 404 error for any unknown api request
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
+app.use('*',(req, res, next) => {
+  // console.log("route", req);
+  next(new ApiError(httpStatus.NOT_FOUND, `${req.baseUrl} URL NOT FOUND `));
 });
 
+// Convert error to ApiError, if request was rejected or it throws an error
+app.use(errorConverter);
+
+// Handle the error
+app.use(errorHandler);
 
 module.exports = app;
