@@ -10,6 +10,7 @@ const logger = require("../config/logger");
  */
 const errorConverter = (err, req, res, next) => {
   let error = err;
+  logger.info("in error converter");
 
   // httpStatus.BAD_REQUEST : the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax)
   if (!(error instanceof ApiError)) {
@@ -24,6 +25,7 @@ const errorConverter = (err, req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
+  logger.info("in error handler");
   let { statusCode, message } = err;
   if (config.env === "production" && !err.isOperational) {
     statusCode = httpStatus.INTERNAL_SERVER_ERROR;
@@ -39,7 +41,7 @@ const errorHandler = (err, req, res, next) => {
   };
 
   if (config.env === "development") {
-    logger.error(err);
+    logger.error("========================", err);  
   }
 
   res.status(statusCode).send(response);
