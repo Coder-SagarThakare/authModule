@@ -10,8 +10,10 @@ const httpStatus = require("http-status");
  */
 
 const createUser = async (userBody) => {
+  console.log('in user service : createuser()');
   console.log('userBody',userBody);
 
+  // User.isEmailTaken => return true/false 
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,

@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema(
           );
         }
       },
-      // private: true, // used by the private plugin
+      private: true, // used by the private plugin
     },
     picture: {
       type: String,
@@ -46,9 +46,18 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// returning response in boolean format
+/**
+ * 
+ * @param {string} email - to check mail id present or not
+ * @param {ObjectId} excludeUserId  - exclude given user ObjectId 
+ * @returns {<true/false>}
+ */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  console.log('in user model : isEmailTaken() static function ');
+
+  // this : represent Model { User }
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  
   return !!user;
 };
 
