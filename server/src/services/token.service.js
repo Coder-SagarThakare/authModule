@@ -13,11 +13,10 @@ const httpStatus = require('http-status');
 const generateAuthTokens = async (user) => {
     const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
 
-    console.log('accessTokenExpires',accessTokenExpires);
+    // console.log('accessTokenExpires',accessTokenExpires);
 
     const accessToken = generateToken(user.id || user._id, accessTokenExpires, tokenTypes.ACCESS);
 
-    console.log('accessToken',accessToken);
   
     return {  
       token: accessToken,
@@ -41,7 +40,7 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
       type,
     };
 
-    console.log('jwt.sign(payload, secret',jwt.sign(payload, secret));
+    // console.log('jwt.sign(payload, secret',jwt.sign(payload, secret));
 
     return jwt.sign(payload, secret);
   };

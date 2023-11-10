@@ -20,7 +20,6 @@ const createUser = async (userBody) => {
       "User already exists with this email"
     );
   }
-
   return User.create(userBody);
 };
 

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const catchAsync = require("../utils/catchAsync");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -47,19 +48,27 @@ const userSchema = mongoose.Schema(
 );
 
 /**
- * 
+ *
  * @param {string} email - to check mail id present or not
- * @param {ObjectId} excludeUserId  - exclude given user ObjectId 
+ * @param {ObjectId} excludeUserId  - exclude given user ObjectId
  * @returns {<true/false>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  console.log('in user model : isEmailTaken() static function ');
+  console.log("in user model : isEmailTaken() static function ");
 
   // this : represent Model { User }
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
-  
+
   return !!user;
 };
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
 
 /**
  * @typedef User
