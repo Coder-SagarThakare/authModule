@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const catchAsync = require("../utils/catchAsync");
 const bcrypt = require("bcrypt");
+const { private } = require("./plugins");
 
 const userSchema = mongoose.Schema(
   {
@@ -47,6 +47,8 @@ const userSchema = mongoose.Schema(
   }
 );
 
+userSchema.plugin(private);
+
 /**
  *
  * @param {string} email - to check mail id present or not
@@ -54,7 +56,6 @@ const userSchema = mongoose.Schema(
  * @returns {<true/false>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  console.log("in user model : isEmailTaken() static function ");
 
   // this : represent Model { User }
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
@@ -76,3 +77,8 @@ userSchema.pre("save", async function (next) {
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
+
+/**
+ * When fetching a user from the database, this plugin ensures that the password field is excluded from the output.
+ * It helps maintain data privacy and security by not exposing sensitive information.
+ */

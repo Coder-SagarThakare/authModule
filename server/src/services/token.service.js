@@ -13,11 +13,8 @@ const httpStatus = require('http-status');
 const generateAuthTokens = async (user) => {
     const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
 
-    // console.log('accessTokenExpires',accessTokenExpires);
-
     const accessToken = generateToken(user.id || user._id, accessTokenExpires, tokenTypes.ACCESS);
 
-  
     return {  
       token: accessToken,
       expires: accessTokenExpires.toDate()
