@@ -10,7 +10,10 @@ router.get("/", (req, res) => {
   res.send("hiii in auth /");
 });
 
-router.post("/register",[ captcha.verify, validate(authValidation.register) ], authController.register);
-
-// router.post('/login',[captcha.verify],)
+router.post(
+  "/register",
+  [captcha.verify, validate(authValidation.register)],
+  authController.register
+);
+router.post("/login", [captcha.verify], authController.login);
 module.exports = router;

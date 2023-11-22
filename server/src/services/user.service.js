@@ -1,4 +1,3 @@
-const catchAsync = require("../utils/catchAsync");
 const { User } = require("../models");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
@@ -10,8 +9,7 @@ const httpStatus = require("http-status");
  */
 
 const createUser = async (userBody) => {
-
-  // User.isEmailTaken => return true/false 
+  // User.isEmailTaken => return true/false
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
@@ -21,4 +19,16 @@ const createUser = async (userBody) => {
   return User.create(userBody);
 };
 
-module.exports = { createUser };
+/**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+const getUserByEmail = async (email) => {
+  return User.findOne({
+    email,
+  });
+};
+
+
+module.exports = { createUser, getUserByEmail };

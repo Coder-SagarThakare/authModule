@@ -28,7 +28,7 @@ const private = (schema) => {
           deleteAtPath(ret, path.split("."), 0);
         }
       });
-      // console.log('================= IN PRIVATE PLUGIN');
+      console.log('================= IN PRIVATE PLUGIN');
 
       delete ret.__v;
 

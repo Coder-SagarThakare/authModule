@@ -35,7 +35,8 @@ const userSchema = mongoose.Schema(
           );
         }
       },
-      private: true, // used by the private plugin
+      // private: true, // used by the private plugin
+      // select: false,
     },
     picture: {
       type: String,
@@ -47,7 +48,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
-userSchema.plugin(private);
+// userSchema.plugin(private);
 
 /**
  *
@@ -61,6 +62,16 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
 
   return !!user;
+};
+
+/**
+ * Check if password matches the user's password
+ * @param {string} password
+ * @returns {Promise<boolean>}
+ */
+userSchema.methods.isPasswordMatch = async function (password) {
+  const user = this;
+  return bcrypt.compare(password, user.password);
 };
 
 userSchema.pre("save", async function (next) {

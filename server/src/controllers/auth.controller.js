@@ -1,6 +1,6 @@
 const express = require("express");
 const catchAsync = require("../utils/catchAsync");
-const { userService, tokenService } = require("../services");
+const { userService, tokenService, authService } = require("../services");
 const httpStatus = require("http-status");
 
 const register = catchAsync(async (req, res) => {
@@ -16,15 +16,25 @@ const register = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send({
       user,
       token,
-      expires
+      expires,
     });
   } catch (error) {
     throw error;
   }
 });
 
-const login = catchAsync(async (req,res)=>{
+const login = catchAsync(async (req, res) => { 
+  const { email, password } = req.body;
+  const user = await authService.loginUserWithEmailAndPassword(email, password);
 
-})
+  console.log('after populate()');
 
-module.exports = { register };
+  // const { token, expires } = await tokenService.generateAuthTokens(user);
+  res.send({
+    user,
+    // token,
+    // expires,
+  });
+});
+
+module.exports = { register, login };
