@@ -23,17 +23,16 @@ const register = catchAsync(async (req, res) => {
   }
 });
 
-const login = catchAsync(async (req, res) => { 
+const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
+  
   const user = await authService.loginUserWithEmailAndPassword(email, password);
 
-  console.log('after populate()');
-
-  // const { token, expires } = await tokenService.generateAuthTokens(user);
+  const { token, expires } = await tokenService.generateAuthTokens(user);
   res.send({
     user,
-    // token,
-    // expires,
+    token,
+    expires,
   });
 });
 

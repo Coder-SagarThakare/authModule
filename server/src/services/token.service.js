@@ -19,7 +19,7 @@ const generateAuthTokens = async (user) => {
       token: accessToken,
       expires: accessTokenExpires.toDate()
     };
-  };
+  }; 
 
   /**
  * Generate token
@@ -29,17 +29,20 @@ const generateAuthTokens = async (user) => {
  * @param {string} [secret]
  * @returns {string}
  */
+
+  /**
+   * The moment.unix() function in the context of the moment library is used to 
+   * convert a Unix timestamp (seconds since the Unix epoch) into a moment object. 
+   */
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
     const payload = {
       sub: userId,
-      iat: moment().unix(),
-      exp: expires.unix(),
+      iat: moment().unix(),   //iat : Issued At
+      exp: expires.unix(),    //exp : Expiration Time
       type,
     };
 
-    // console.log('jwt.sign(payload, secret',jwt.sign(payload, secret));
-
     return jwt.sign(payload, secret);
-  };
+  };  
 
   module.exports = {generateAuthTokens}

@@ -12,6 +12,9 @@
  * 
  * In Mongoose, the process responsible for converting Mongoose documents to JSON when retrieving data is the toJSON() method.
  * serializations : serialization commonly involves converting Mongoose documents (which are JavaScript objects) into JSON format.
+ * 
+ * when given retrieved data we are sending as a response at that time our private plugin will be called. 
+ * 
  */
 
 const private = (schema) => {
