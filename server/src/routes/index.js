@@ -6,7 +6,7 @@ const userRoute = require("./user.route");
 
 router.get("/", (req, res) => {
   // console.log("/ route");
-  res.send('initial route ')
+  res.send('initial route index.js')
 });
 
 const defaultRoutes = [

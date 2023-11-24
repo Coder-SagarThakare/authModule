@@ -19,7 +19,8 @@ const logger = createLogger({
     enumerateErrorFormat(),
     config.env === "development" ? colorize() : uncolorize(),
     splat(),
-    timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    // timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    timestamp({ format: "HH:mm:ss" }),
     printf(
       ({ level, message, timestamp, label }) =>
         `${timestamp} : ${level} : ${message}`
