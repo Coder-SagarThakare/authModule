@@ -9,11 +9,16 @@ const router = require("express").Router();
 router.get("/", (req, res) => {
   res.send("hiii in auth /");
 });
-  
+
 router.post(
   "/register",
   [captcha.verify, validate(authValidation.register)],
   authController.register
 );
-router.post("/login", [captcha.verify], authController.login);
+
+router.post(
+  "/login",
+  [captcha.verify, validate(authValidation.login)],
+  authController.login
+);
 module.exports = router;

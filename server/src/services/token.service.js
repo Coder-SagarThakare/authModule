@@ -4,7 +4,6 @@ const { tokenTypes } = require('../config/token');
 const jwt = require('jsonwebtoken');
 const httpStatus = require('http-status');
 
-
 /**
  * Generate auth tokens
  * @param {User} user
