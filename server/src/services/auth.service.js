@@ -1,5 +1,7 @@
 const httpStatus = require("http-status");
-const { userService } = require(".");
+// const { userService, tokenService } = require(".");
+const userService = require("./user.service");
+const tokenService = require("./token.service");
 const ApiError = require("../utils/ApiError");
 const { OAuth2Client } = require("google-auth-library");
 const config = require("../config/config");
@@ -20,7 +22,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 
 const loginWithGoogle = async (idToken) => {
   const oAuth2Client = new OAuth2Client(config.socialLogin.google.clientId);
-  
+
   const ticket = await oAuth2Client.verifyIdToken({
     idToken: idToken,
     audience: config.socialLogin.google.clientId,
@@ -31,13 +33,25 @@ const loginWithGoogle = async (idToken) => {
   }
   const user = await userService.getUserByEmail(email);
   if (!user || user.deleted) {
-
-    throw new ApiError(httpStatus.UNAUTHORIZED, "This user does not exist");
+    // authController.register();
   }
   return user;
+};
+
+const registerUser = async (userBody) => {
+  try {
+    const user = await userService.createUser({ ...userBody });
+
+    const { token, expires } = await tokenService.generateAuthTokens(user);
+
+    return { user, token, expires };
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = {
   loginUserWithEmailAndPassword,
   loginWithGoogle,
+  registerUser,
 };
