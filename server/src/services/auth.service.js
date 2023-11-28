@@ -31,9 +31,10 @@ const loginWithGoogle = async (idToken) => {
   }
   const user = await userService.getUserByEmail(email);
   if (!user || user.deleted) {
+
     throw new ApiError(httpStatus.UNAUTHORIZED, "This user does not exist");
   }
-  return await user.populate("_org", "name email");
+  return user;
 };
 
 module.exports = {
