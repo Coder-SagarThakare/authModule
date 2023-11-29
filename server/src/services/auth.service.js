@@ -1,5 +1,4 @@
 const httpStatus = require("http-status");
-// const { userService, tokenService } = require(".");
 const userService = require("./user.service");
 const tokenService = require("./token.service");
 const ApiError = require("../utils/ApiError");
@@ -27,13 +26,24 @@ const loginWithGoogle = async (idToken) => {
     idToken: idToken,
     audience: config.socialLogin.google.clientId,
   });
-  const { email, email_verified } = ticket.getPayload();
+  const { email, email_verified, name, picture, iat } = ticket.getPayload();
+
+  // console.log(ticket.getPayload());
+
   if (!email || !email_verified) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Google authentication failed");
   }
-  const user = await userService.getUserByEmail(email);
+
+  let user = await userService.getUserByEmail(email);
+
   if (!user || user.deleted) {
-    // authController.register();
+    user = await registerUser({
+      name,
+      email,
+      picture,
+      password: `${email}${iat}`,
+      isPasswordUpdated: false,
+    });
   }
   return user;
 };
@@ -42,9 +52,7 @@ const registerUser = async (userBody) => {
   try {
     const user = await userService.createUser({ ...userBody });
 
-    const { token, expires } = await tokenService.generateAuthTokens(user);
-
-    return { user, token, expires };
+    return user;
   } catch (error) {
     throw error;
   }

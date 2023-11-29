@@ -6,7 +6,9 @@ const httpStatus = require("http-status");
 const register = catchAsync(async (req, res) => {
   let user = await authService.registerUser({ ...req.body });
 
-  res.status(httpStatus.CREATED).send(user);
+  const { token, expires } = await tokenService.generateAuthTokens(user);
+
+  res.status(httpStatus.CREATED).json({ user, token, expires });
 });
 
 const login = catchAsync(async (req, res) => {
