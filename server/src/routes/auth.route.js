@@ -22,7 +22,10 @@ router.post(
   authController.login
 );
 
-router.post('/login/:provider', [captcha.verify], authController.socialLogin);
-
+router.post(
+  "/login/:provider",
+  [captcha.verify, validate(authValidation.socialLogin)],
+  authController.socialLogin
+);
 
 module.exports = router;
