@@ -41,6 +41,10 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "https://i.imgur.com/CR1iy7U.png",
     },
+    isPasswordUpdated: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
@@ -56,7 +60,6 @@ userSchema.plugin(private);
  * @returns {<true/false>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-
   // this : represent Model { User }
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
 
