@@ -3,6 +3,8 @@ const config = require("../config/config");
 const { tokenTypes } = require("../config/token");
 const jwt = require("jsonwebtoken");
 const httpStatus = require("http-status");
+const { userService } = require(".");
+const ApiError = require("../utils/ApiError");
 
 /**
  * Generate auth tokens
@@ -47,8 +49,34 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
     exp: expires.unix(), //exp : Expiration Time
     type,
   };
-  
+
   return jwt.sign(payload, secret);
 };
 
-module.exports = { generateAuthTokens };
+/**
+ *
+ * @param {string} email
+ *
+ */
+
+const generateResetPassword = async (email) => {
+  const user = await userService.getUserByEmail(email);
+  if (!user)
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "No user found with given mail-id"
+    );
+
+  const expires = moment().add(
+    config.jwt.resetPasswordExpirationMinutes,
+    "minutes"
+  );
+  const resetPasswordToken = generateToken(
+    user._id,
+    expires,
+    tokenTypes.RESET_PASSWORD
+  );
+  return resetPasswordToken;
+};
+
+module.exports = { generateAuthTokens, generateResetPassword };

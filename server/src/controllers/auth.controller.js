@@ -1,6 +1,6 @@
 const express = require("express");
 const catchAsync = require("../utils/catchAsync");
-const { tokenService, authService } = require("../services");
+const { tokenService, authService, emailService } = require("../services");
 const httpStatus = require("http-status");
 
 const register = catchAsync(async (req, res) => {
@@ -48,5 +48,10 @@ const socialLogin = catchAsync(async (req, res) => {
     expires,
   });
 });
+const forgotPassword = catchAsync(async(req,res)=>{
+  const resetPasswordToken = await tokenService.generateResetPassword(req.body.email)
+  await emailService.sendResetPasswordEmail(req.body.email,resetPasswordToken)
 
-module.exports = { register, login, socialLogin };
+})
+
+module.exports = { register, login, socialLogin ,forgotPassword};

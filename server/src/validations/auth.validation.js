@@ -21,8 +21,15 @@ const socialLogin = {
     token: Joi.string().required(),
   }),
 };
+
+const forgotPassword = {
+  body : Joi.object().keys({
+    email : Joi.string().email().required()
+  })
+}
 module.exports = {
   register,
   login,
-  socialLogin
+  socialLogin,
+  forgotPassword
 };

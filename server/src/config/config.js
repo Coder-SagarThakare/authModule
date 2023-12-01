@@ -9,7 +9,7 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
     JWT_SECRET: Joi.string().required().description("JWT secret key"),
-    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number() 
+    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
       .default(10)
       .description("minutes after which reset password token expires"),
   })
@@ -30,6 +30,7 @@ if (error) {
 module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  siteUrl: envVars.SITE_URL,
   jwt: {
     secret: envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
@@ -38,7 +39,7 @@ module.exports = {
     verifyEmailExpirationMinutes: envVars.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES,
   },
   mongoose: {
-    url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
+    url: envVars.MONGODB_URL + (envVars.NODE_ENV === "test" ? "-test" : ""),
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -46,10 +47,23 @@ module.exports = {
   },
   socialLogin: {
     google: {
-      clientId: envVars.GOOGLE_CLIENT_ID
+      clientId: envVars.GOOGLE_CLIENT_ID,
     },
     facebook: {
-      clientId: envVars.FACEBOOK_APP_ID
-    }
+      clientId: envVars.FACEBOOK_APP_ID,
+    },
+  },
+  email: {
+    provider: envVars.EMAIL_PROVIDER, //// sendgrid, aws, nodemailer
+    key: envVars.EMAIL_PROVIDER_KEY, // For sendgrid and aws
+    smtp: {
+      host: envVars.SMTP_HOST,
+      port: envVars.SMTP_PORT,
+      auth: {
+        user: envVars.SMTP_USERNAME,
+        pass: envVars.SMTP_PASSWORD,
+      },
+    },
+    from: envVars.EMAIL_FROM,
   },
 };
