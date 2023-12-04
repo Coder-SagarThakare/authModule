@@ -28,6 +28,10 @@ router.post(
   authController.socialLogin
 );
 
-router.post('/forgot-password', [captcha.verify,authValidation.forgotPassword],authController.forgotPassword)
+router.post(
+  "/forgot-password",
+  [captcha.verify, validate(authValidation.forgotPassword)],
+  authController.forgotPassword
+);
 
 module.exports = router;

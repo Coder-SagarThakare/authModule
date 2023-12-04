@@ -51,6 +51,7 @@ const socialLogin = catchAsync(async (req, res) => {
 const forgotPassword = catchAsync(async(req,res)=>{
   const resetPasswordToken = await tokenService.generateResetPassword(req.body.email)
   await emailService.sendResetPasswordEmail(req.body.email,resetPasswordToken)
+  res.send('email sended')
 
 })
 
