@@ -23,13 +23,23 @@ const socialLogin = {
 };
 
 const forgotPassword = {
-  body : Joi.object().keys({
-    email : Joi.string().email().required()
-  })
-}
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+  }),
+};
+
+const resetPassword = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    password: Joi.string().required().custom(password),
+  }),
+};
 module.exports = {
   register,
   login,
   socialLogin,
-  forgotPassword
+  forgotPassword,
+  resetPassword,
 };

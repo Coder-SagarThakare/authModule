@@ -27,6 +27,7 @@ const errorConverter = (err, req, res, next) => {
 const errorHandler = (err, req, res, next) => {
   logger.info("in error handler");
   let { statusCode, message } = err;
+  console.log('from error.js',message, statusCode);
   if (config.env === "production" && !err.isOperational) {
     statusCode = httpStatus.INTERNAL_SERVER_ERROR;
     message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];

@@ -71,4 +71,3 @@ const transport = (function () {
 module.exports = {
   sendResetPasswordEmail,
 };
-``;

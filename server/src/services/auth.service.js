@@ -4,6 +4,7 @@ const tokenService = require("./token.service");
 const ApiError = require("../utils/ApiError");
 const { OAuth2Client } = require("google-auth-library");
 const config = require("../config/config");
+const { tokenTypes } = require("../config/token");
 
 /**
  * Login with username and password
@@ -58,8 +59,31 @@ const registerUser = async (userBody) => {
   }
 };
 
+const resetPassword = async (resetPasswordToken, newPassword) => {
+
+    const payload = await tokenService.verifyToken(
+      resetPasswordToken,
+      tokenTypes.RESET_PASSWORD
+    );
+
+    if (payload.type !== tokenTypes.RESET_PASSWORD) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Please Provide valid Token')
+    }
+
+    const user = await userService.getUserById(payload.sub);
+
+    if (!user) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'User Not Found')
+    }
+
+    await userService.updateUserById(user.id, { password: newPassword });
+
+  // return resetPasswordTokenDoc;
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   loginWithGoogle,
   registerUser,
+  resetPassword,
 };

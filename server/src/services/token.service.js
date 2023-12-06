@@ -1,10 +1,10 @@
 const moment = require("moment");
 const config = require("../config/config");
 const { tokenTypes } = require("../config/token");
-const jwt = require("jsonwebtoken");
 const httpStatus = require("http-status");
 const { userService } = require(".");
 const ApiError = require("../utils/ApiError");
+const jwt = require("jsonwebtoken");
 
 /**
  * Generate auth tokens
@@ -79,4 +79,14 @@ const generateResetPassword = async (email) => {
   return resetPasswordToken;
 };
 
-module.exports = { generateAuthTokens, generateResetPassword };
+const verifyToken = async (token, type) => {
+  try {
+    const payload = jwt.verify(token, config.jwt.secret);
+
+    return payload;
+  } catch (e) {
+    throw new ApiError(httpStatus.UNAUTHORIZED,"Invalid Token");
+  }
+};
+
+module.exports = { generateAuthTokens, generateResetPassword, verifyToken };

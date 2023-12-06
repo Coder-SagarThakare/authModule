@@ -48,11 +48,24 @@ const socialLogin = catchAsync(async (req, res) => {
     expires,
   });
 });
-const forgotPassword = catchAsync(async(req,res)=>{
-  const resetPasswordToken = await tokenService.generateResetPassword(req.body.email)
-  await emailService.sendResetPasswordEmail(req.body.email,resetPasswordToken)
-  res.send('email sended')
 
-})
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateResetPassword(
+    req.body.email
+  );
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.status(200).json({ message: "Email sent successfully" });
+});
 
-module.exports = { register, login, socialLogin ,forgotPassword};
+const resetPassword = catchAsync(async (req, res) => {
+  const a = await authService.resetPassword(req.query.token, req.body.password);
+
+  res.send(a);
+});
+module.exports = {
+  register,
+  login,
+  socialLogin,
+  forgotPassword,
+  resetPassword,
+};
