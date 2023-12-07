@@ -71,11 +71,9 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "User Not Found");
   }
 
-  const us = await userService.updateUserById(user.id, {
+ await userService.updateUserById(user.id, {
     password: newPassword,
   });
-  console.log("us", us);
-  // return resetPasswordTokenDoc;
 };
 
 module.exports = {
