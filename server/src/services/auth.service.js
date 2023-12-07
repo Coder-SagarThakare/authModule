@@ -60,24 +60,21 @@ const registerUser = async (userBody) => {
 };
 
 const resetPassword = async (resetPasswordToken, newPassword) => {
+  const payload = await tokenService.verifyToken(
+    resetPasswordToken,
+    tokenTypes.RESET_PASSWORD
+  );
 
-    const payload = await tokenService.verifyToken(
-      resetPasswordToken,
-      tokenTypes.RESET_PASSWORD
-    );
+  const user = await userService.getUserById(payload.sub);
 
-    if (payload.type !== tokenTypes.RESET_PASSWORD) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Please Provide valid Token')
-    }
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "User Not Found");
+  }
 
-    const user = await userService.getUserById(payload.sub);
-
-    if (!user) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'User Not Found')
-    }
-
-    await userService.updateUserById(user.id, { password: newPassword });
-
+  const us = await userService.updateUserById(user.id, {
+    password: newPassword,
+  });
+  console.log("us", us);
   // return resetPasswordTokenDoc;
 };
 
