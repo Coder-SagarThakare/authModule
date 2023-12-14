@@ -24,7 +24,7 @@ const sendEmail = async (to, subject, text) => {
     from: config.email.from,
     to,
     subject,
-    html : text,
+    html: text,
   };
 
   switch (config.email.provider) {
@@ -68,6 +68,18 @@ const transport = (function () {
   }
 })();
 
+const sendVerificationEmail = async (to, token) => {
+  const subject = "Email Verification";
+  // replace this url with the link to the email verification page of your front-end app
+  const verificationUrl = `${config.siteUrl}/auth/verify-email?token=${token}`;
+  const text = `<html>Dear user,
+  To verify your email click on given link <a href=${verificationUrl}>Verify the Email </a>
+  If you did not send request for verify email, then ignore this email.<html>`
+
+  await sendEmail(to,subject,text)
+};
+
 module.exports = {
   sendResetPasswordEmail,
+  sendVerificationEmail
 };

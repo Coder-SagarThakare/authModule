@@ -60,12 +60,21 @@ const forgotPassword = catchAsync(async (req, res) => {
 const resetPassword = catchAsync(async (req, res) => {
   const a = await authService.resetPassword(req.query.token, req.body.password);
   res.status(200).json({ message: "Password reset successfully" });
-
 });
+
+const sendVerificationEmail = catchAsync(async (req, res) => {
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
+    req.user
+  );
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  res.status(httpStatus.OK).json({ message: "Reset email sent successfully" });
+});
+
 module.exports = {
   register,
   login,
   socialLogin,
   forgotPassword,
   resetPassword,
+  sendVerificationEmail,
 };

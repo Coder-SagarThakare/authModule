@@ -84,13 +84,30 @@ const verifyToken = async (token, type) => {
     const payload = jwt.verify(token, config.jwt.secret);
 
     if (payload.type !== tokenTypes.RESET_PASSWORD) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Please Provide valid Token')
+      throw new ApiError(httpStatus.BAD_REQUEST, "Please Provide valid Token");
     }
 
     return payload;
   } catch (e) {
-    throw new ApiError(httpStatus.UNAUTHORIZED,"Invalid Token");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid Token");
   }
 };
 
-module.exports = { generateAuthTokens, generateResetPassword, verifyToken };
+const generateVerifyEmailToken = async (user) => {
+  const expires = moment().add(
+    config.jwt.verifyEmailExpirationMinutes,
+    "minutes"
+  );
+  const verifyEmailToken = generateToken(
+    user.id,
+    expires,
+    tokenTypes.VERIFY_EMAIL
+  );
+  return verifyEmailToken;
+};
+module.exports = {
+  generateAuthTokens,
+  generateResetPassword,
+  verifyToken,
+  generateVerifyEmailToken,
+};

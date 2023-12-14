@@ -1,5 +1,6 @@
 const logger = require("../config/logger");
 const { authController } = require("../controllers");
+const auth = require("../middlewares/auth");
 const captcha = require("../middlewares/captcha");
 const validate = require("../middlewares/validate");
 const { authValidation } = require("../validations");
@@ -39,4 +40,6 @@ router.post(
   validate(authValidation.resetPassword),
   authController.resetPassword
 );
+
+router.post("/send-verification-email", [auth()],authController.sendVerificationEmail );
 module.exports = router;

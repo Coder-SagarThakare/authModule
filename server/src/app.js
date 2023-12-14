@@ -7,7 +7,9 @@ const config = require("./config/config");
 const authLimiter = require("./middlewares/rateLimiter");
 const ApiError = require("./utils/ApiError");
 const httpStatus = require("http-status");
+const passport = require('passport')
 const { errorConverter, errorHandler } = require("./middlewares/error");
+const { jwtStrategy } = require("./config/passport");
 
 // ------------------  MIDDLEWARES  ----------------------------
 
@@ -16,6 +18,12 @@ app.use(bodyParser.json());
 
 // Parse urlencoded request body if provided with any of the requests
 app.use(express.urlencoded({ extended: true }));
+
+// Initialize jwt authentication
+app.use(passport.initialize());
+
+// Define jwt token authentication strategy
+passport.use('jwt', jwtStrategy); 
 
 // Enable cors to accept requests from any frontend domain,
 app.use(cors());
@@ -32,7 +40,7 @@ app.use("/", routes);
 app.use('*',(req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, `${req.baseUrl} URL NOT FOUND `));
 });
-  
+    
 // Convert error to ApiError, if request was rejected or it throws an error
 app.use(errorConverter);
 
