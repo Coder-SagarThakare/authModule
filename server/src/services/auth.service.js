@@ -29,8 +29,6 @@ const loginWithGoogle = async (idToken) => {
   });
   const { email, email_verified, name, picture, iat } = ticket.getPayload();
 
-  // console.log(ticket.getPayload());
-
   if (!email || !email_verified) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Google authentication failed");
   }

@@ -90,10 +90,7 @@ const verifyToken = async (token, type) => {
 };
 
 const generateVerifyEmailToken = async (user) => {
-  console.log(
-    "config.jwt.verifyEmailExpirationMinutes",
-    config.jwt.verifyEmailExpirationMinutes
-  );
+
   const expires = moment().add(
     config.jwt.verifyEmailExpirationMinutes,
     "minutes"
