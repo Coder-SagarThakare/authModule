@@ -83,10 +83,6 @@ const verifyToken = async (token, type) => {
   try {
     const payload = jwt.verify(token, config.jwt.secret);
 
-    if (payload.type !== tokenTypes.RESET_PASSWORD) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "Please Provide valid Token");
-    }
-
     return payload;
   } catch (e) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid Token");
@@ -94,6 +90,10 @@ const verifyToken = async (token, type) => {
 };
 
 const generateVerifyEmailToken = async (user) => {
+  console.log(
+    "config.jwt.verifyEmailExpirationMinutes",
+    config.jwt.verifyEmailExpirationMinutes
+  );
   const expires = moment().add(
     config.jwt.verifyEmailExpirationMinutes,
     "minutes"
@@ -105,6 +105,7 @@ const generateVerifyEmailToken = async (user) => {
   );
   return verifyEmailToken;
 };
+
 module.exports = {
   generateAuthTokens,
   generateResetPassword,

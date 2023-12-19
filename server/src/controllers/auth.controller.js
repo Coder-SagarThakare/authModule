@@ -1,4 +1,3 @@
-const express = require("express");
 const catchAsync = require("../utils/catchAsync");
 const { tokenService, authService, emailService } = require("../services");
 const httpStatus = require("http-status");
@@ -67,7 +66,12 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
     req.user
   );
   await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
-  res.status(httpStatus.OK).json({ message: "Reset email sent successfully" });
+  res.status(httpStatus.OK).json({ message: "verify email sent successfully" });
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+  await authService.verifyEmail(req.query.token);
+  res.status(httpStatus.OK).json({ message: "e-mail verified successfully" });
 });
 
 module.exports = {
@@ -77,4 +81,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   sendVerificationEmail,
+  verifyEmail,
 };

@@ -65,20 +65,45 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     tokenTypes.RESET_PASSWORD
   );
 
+  if (payload.type !== tokenTypes.RESET_PASSWORD) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please Provide valid Token");
+  }
+
   const user = await userService.getUserById(payload.sub);
 
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User Not Found");
   }
 
- await userService.updateUserById(user.id, {
+  await userService.updateUserById(user.id, {
     password: newPassword,
   });
 };
 
+const verifyEmail = async (verifyEmailToken) => {
+  try {
+    const payload = await tokenService.verifyToken(
+      verifyEmailToken,
+      tokenTypes.VERIFY_EMAIL
+    );
+
+    const user = await userService.getUserById(payload.sub);
+
+    if (!user) {
+      throw new Error();
+    }
+
+    await userService.updateUserById(user.id, {
+      isEmailVerified: true,
+    });
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Email verification failed");
+  }
+};
 module.exports = {
   loginUserWithEmailAndPassword,
   loginWithGoogle,
   registerUser,
   resetPassword,
+  verifyEmail,
 };
