@@ -7,7 +7,7 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const result = await userService.updateUserById(req.user._id, req.body);
+  await userService.updateUserById(req.user._id, req.body);
 
   res
     .status(200)

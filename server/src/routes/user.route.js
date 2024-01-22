@@ -1,5 +1,7 @@
 const { userController } = require("../controllers");
 const auth = require("../middlewares/auth");
+const validate = require("../middlewares/validate");
+const { userValidation } = require("../validations");
 
 const router = require("express").Router();
 
@@ -10,7 +12,6 @@ router.use(auth());
 router
   .route("/self")
   .get(userController.getUser)
-  .patch(userController.updateUser);
-
+  .patch(validate(userValidation.updateUser), userController.updateUser);
 
 module.exports = router;
