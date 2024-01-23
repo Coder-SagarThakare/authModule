@@ -1,5 +1,6 @@
 const logger = require("../config/logger");
 const { authController } = require("../controllers");
+const auth = require("../middlewares/auth");
 const captcha = require("../middlewares/captcha");
 const validate = require("../middlewares/validate");
 const { authValidation } = require("../validations");
@@ -22,7 +23,33 @@ router.post(
   authController.login
 );
 
-router.post('/login/:provider', [captcha.verify], authController.socialLogin);
+router.post(
+  "/login/:provider",
+  [captcha.verify, validate(authValidation.socialLogin)],
+  authController.socialLogin
+);
 
+router.post(
+  "/forgot-password",
+  [captcha.verify, validate(authValidation.forgotPassword)],
+  authController.forgotPassword
+);
 
+router.post(
+  "/reset-password",
+  validate(authValidation.resetPassword),
+  authController.resetPassword
+);
+
+router.post(
+  "/send-verification-email",
+  [auth()],
+  authController.sendVerificationEmail
+);
+
+router.post(
+  "/verify-email",
+  validate(authValidation.verifyEmail),
+  authController.verifyEmail
+);
 module.exports = router;

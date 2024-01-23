@@ -4,6 +4,7 @@ const tokenService = require("./token.service");
 const ApiError = require("../utils/ApiError");
 const { OAuth2Client } = require("google-auth-library");
 const config = require("../config/config");
+const { tokenTypes } = require("../config/token");
 
 /**
  * Login with username and password
@@ -27,8 +28,6 @@ const loginWithGoogle = async (idToken) => {
     audience: config.socialLogin.google.clientId,
   });
   const { email, email_verified, name, picture, iat } = ticket.getPayload();
-
-  // console.log(ticket.getPayload());
 
   if (!email || !email_verified) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Google authentication failed");
@@ -58,8 +57,51 @@ const registerUser = async (userBody) => {
   }
 };
 
+const resetPassword = async (resetPasswordToken, newPassword) => {
+  const payload = await tokenService.verifyToken(
+    resetPasswordToken,
+    tokenTypes.RESET_PASSWORD
+  );
+
+  if (payload.type !== tokenTypes.RESET_PASSWORD) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please Provide valid Token");
+  }
+
+  const user = await userService.getUserById(payload.sub);
+
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "User Not Found");
+  }
+
+  await userService.updateUserById(user.id, {
+    password: newPassword,
+  });
+};
+
+const verifyEmail = async (verifyEmailToken) => {
+  try {
+    const payload = await tokenService.verifyToken(
+      verifyEmailToken,
+      tokenTypes.VERIFY_EMAIL
+    );
+
+    const user = await userService.getUserById(payload.sub);
+
+    if (!user) {
+      throw new Error();
+    }
+
+    await userService.updateUserById(user.id, {
+      isEmailVerified: true,
+    });
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Email verification failed");
+  }
+};
 module.exports = {
   loginUserWithEmailAndPassword,
   loginWithGoogle,
   registerUser,
+  resetPassword,
+  verifyEmail,
 };

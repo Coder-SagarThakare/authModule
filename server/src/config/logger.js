@@ -7,7 +7,6 @@ const path = require("path");
 
 const enumerateErrorFormat = format((info) => {
   if (info instanceof Error) {
-    console.log(info.stack);
     Object.assign(info, { message: info.stack });
   }
   return info;

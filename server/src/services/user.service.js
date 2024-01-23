@@ -16,7 +16,6 @@ const createUser = async (userBody) => {
       "User already exists with this email"
     );
   }
-  console.log(user);
 
   return User.create(userBody);
 };
@@ -32,4 +31,27 @@ const getUserByEmail = async (email) => {
   });
 };
 
-module.exports = { createUser, getUserByEmail };
+const getUserById = (id) => {
+  return User.findById(id);
+};
+
+const updateUserById = async (userId, updateBody) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "User not found");
+  }
+  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "User already exists with this email"
+    );
+  }
+
+  Object.assign(user, updateBody);
+
+  await user.save();
+
+  return user;
+};
+
+module.exports = { createUser, getUserByEmail, getUserById, updateUserById };

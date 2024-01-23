@@ -1,6 +1,5 @@
-const express = require("express");
 const catchAsync = require("../utils/catchAsync");
-const { tokenService, authService } = require("../services");
+const { tokenService, authService, emailService } = require("../services");
 const httpStatus = require("http-status");
 
 const register = catchAsync(async (req, res) => {
@@ -49,4 +48,38 @@ const socialLogin = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { register, login, socialLogin };
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateResetPassword(
+    req.body.email
+  );
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.status(200).json({ message: "Email sent successfully" });
+});
+
+const resetPassword = catchAsync(async (req, res) => {
+  const a = await authService.resetPassword(req.query.token, req.body.password);
+  res.status(200).json({ message: "Password reset successfully" });
+});
+
+const sendVerificationEmail = catchAsync(async (req, res) => {
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
+    req.user
+  );
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  res.status(httpStatus.OK).json({ message: "verify email sent successfully" });
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+  await authService.verifyEmail(req.query.token);
+  res.status(httpStatus.OK).json({ message: "e-mail verified successfully" });
+});
+
+module.exports = {
+  register,
+  login,
+  socialLogin,
+  forgotPassword,
+  resetPassword,
+  sendVerificationEmail,
+  verifyEmail,
+};
