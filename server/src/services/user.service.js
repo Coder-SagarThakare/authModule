@@ -1,4 +1,3 @@
-const catchAsync = require("../utils/catchAsync");
 const { User } = require("../models");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
@@ -10,17 +9,49 @@ const httpStatus = require("http-status");
  */
 
 const createUser = async (userBody) => {
-  console.log('in user service : createuser()');
-  console.log('userBody',userBody);
-
-  // User.isEmailTaken => return true/false 
+  // User.isEmailTaken => return true/false
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       "User already exists with this email"
     );
   }
+
   return User.create(userBody);
 };
 
-module.exports = { createUser };
+/**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+const getUserByEmail = async (email) => {
+  return User.findOne({
+    email,
+  });
+};
+
+const getUserById = (id) => {
+  return User.findById(id);
+};
+
+const updateUserById = async (userId, updateBody) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "User not found");
+  }
+  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "User already exists with this email"
+    );
+  }
+
+  Object.assign(user, updateBody);
+
+  await user.save();
+
+  return user;
+};
+
+module.exports = { createUser, getUserByEmail, getUserById, updateUserById };

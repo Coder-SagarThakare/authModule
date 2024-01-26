@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const catchAsync = require("../utils/catchAsync");
 const bcrypt = require("bcrypt");
+const { private } = require("./plugins");
 
 const userSchema = mongoose.Schema(
   {
@@ -41,11 +41,21 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "https://i.imgur.com/CR1iy7U.png",
     },
+    isEmailVerified : {
+      type:Boolean,
+      default : false
+    } ,
+    isPasswordUpdated: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.plugin(private);
 
 /**
  *
@@ -54,12 +64,21 @@ const userSchema = mongoose.Schema(
  * @returns {<true/false>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  console.log("in user model : isEmailTaken() static function ");
-
   // this : represent Model { User }
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
 
   return !!user;
+};
+
+/**
+ * Check if password matches the user's password
+ * @param {string} password
+ * @returns {Promise<boolean>}
+ */
+userSchema.methods.isPasswordMatch = async function (password) {
+  const user = this;
+
+  return bcrypt.compare(password, user.password);
 };
 
 userSchema.pre("save", async function (next) {
@@ -76,3 +95,8 @@ userSchema.pre("save", async function (next) {
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
+
+/**
+ * When fetching a user from the database, this plugin ensures that the password field is excluded from the output.
+ * It helps maintain data privacy and security by not exposing sensitive information.
+ */

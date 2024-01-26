@@ -1,27 +1,85 @@
-const express = require("express");
 const catchAsync = require("../utils/catchAsync");
-const { userService, tokenService } = require("../services");
+const { tokenService, authService, emailService } = require("../services");
 const httpStatus = require("http-status");
 
 const register = catchAsync(async (req, res) => {
-  console.log("in auth controller : register()");
-  let user;
-  try {
-    user = await userService.createUser({ ...req.body });
+  let user = await authService.registerUser({ ...req.body });
 
-    //find other way for that
-    user.password = undefined;
+  const { token, expires } = await tokenService.generateAuthTokens(user);
 
-    const { token, expires } = await tokenService.generateAuthTokens(user);
-
-    res.status(httpStatus.CREATED).send({
-      user,
-      token,
-      expires
-    });
-  } catch (error) {
-    throw error;
-  }
+  res.status(httpStatus.CREATED).json({ user, token, expires });
 });
 
-module.exports = { register };
+const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await authService.loginUserWithEmailAndPassword(email, password);
+
+  const { token, expires } = await tokenService.generateAuthTokens(user);
+  res.send({
+    user,
+    token,
+    expires,
+  });
+});
+
+const socialLogin = catchAsync(async (req, res) => {
+  const idToken = req.body.token;
+  let user;
+  const provider = req.params.provider.toLowerCase();
+  switch (provider) {
+    case "google":
+      user = await authService.loginWithGoogle(idToken);
+      break;
+    // case "facebook":
+    // user = await authService.loginWithFacebook(idToken);
+    // break;
+    default:
+      throw new ApiError(
+        httpStatus.UNPROCESSABLE_ENTITY,
+        `Provider ${req.body.provider} is not supported`
+      );
+  }
+  const { token, expires } = await tokenService.generateAuthTokens(user);
+  res.send({
+    user,
+    token,
+    expires,
+  });
+});
+
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateResetPassword(
+    req.body.email
+  );
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.status(200).json({ message: "Email sent successfully" });
+});
+
+const resetPassword = catchAsync(async (req, res) => {
+  const a = await authService.resetPassword(req.query.token, req.body.password);
+  res.status(200).json({ message: "Password reset successfully" });
+});
+
+const sendVerificationEmail = catchAsync(async (req, res) => {
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
+    req.user
+  );
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  res.status(httpStatus.OK).json({ message: "verify email sent successfully" });
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+  await authService.verifyEmail(req.query.token);
+  res.status(httpStatus.OK).json({ message: "e-mail verified successfully" });
+});
+
+module.exports = {
+  register,
+  login,
+  socialLogin,
+  forgotPassword,
+  resetPassword,
+  sendVerificationEmail,
+  verifyEmail,
+};
