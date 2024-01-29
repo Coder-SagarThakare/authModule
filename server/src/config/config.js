@@ -66,4 +66,10 @@ module.exports = {
     },
     from: envVars.EMAIL_FROM,
   },
+  gmail: {
+    auth: {
+      user: envVars.GMAIL_USERNAME,
+      pass: envVars.GMAIL_PASSWORD
+    }
+  },
 };

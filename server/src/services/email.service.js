@@ -21,15 +21,21 @@ const sendResetPasswordEmail = async (to, token) => {
 
 const sendEmail = async (to, subject, text) => {
   const msg = {
-    from: config.email.from,
+    from: 'admin@gmail.com',
+    sender : 'sagyaaaaaaaa',
     to,
     subject,
     html: text,
   };
 
+
   switch (config.email.provider) {
     case "sendgrid":
       // to be implemented.
+      break;
+
+    case "gmail":
+      await transport.sendMail(msg);
       break;
 
     case "smtp":
@@ -47,6 +53,17 @@ const transport = (function () {
     case "aws":
       // To be implemented later. Use smtp for development
       throw new Error("AWS Mailer not supported");
+
+    case "gmail":
+      const mailTransporter = nodemailer.createTransport({
+        service: config.email.provider,
+        auth: {
+          user: config.gmail.auth.user,
+          pass: config.gmail.auth.pass
+        }
+      })
+
+      return mailTransporter;
 
     case "smtp":
     default:
@@ -76,7 +93,7 @@ const sendVerificationEmail = async (to, token) => {
   To verify your email click on given link <a href=${verificationUrl}>Verify the Email </a><br>
   If you did not send request for verify email, then ignore this email.<html>`
 
-  await sendEmail(to,subject,text)
+  await sendEmail(to, subject, text)
 };
 
 module.exports = {
