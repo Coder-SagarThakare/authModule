@@ -14,20 +14,20 @@ const sendResetPasswordEmail = async (to, token) => {
 
   const text = `<HTML>Dear User,</br>
   To reset your password, click on the link  <a href=${resetPasswordUrl} >Verify Account </a> </br> 
-  If you did not request any password reset, then ignore this email.</HTML>`;
+  If you did not request any password reset, then ignore this email.</br>
+  
+  Beta version : need to update proper siteurl of server</HTML>`;
 
   await sendEmail(to, subject, text);
 };
 
 const sendEmail = async (to, subject, text) => {
   const msg = {
-    from: 'admin@gmail.com',
-    sender : 'sagyaaaaaaaa',
+    from: config.gmail.auth.user,
     to,
     subject,
     html: text,
   };
-
 
   switch (config.email.provider) {
     case "sendgrid":
@@ -91,7 +91,9 @@ const sendVerificationEmail = async (to, token) => {
   const verificationUrl = `${config.siteUrl}/auth/verify-email?token=${token}`;
   const text = `<html>Dear user,<br>
   To verify your email click on given link <a href=${verificationUrl}>Verify the Email </a><br>
-  If you did not send request for verify email, then ignore this email.<html>`
+  If you did not send request for verify email, then ignore this email.</br>
+  
+  Beta version : need to update proper siteurl of server <html>`
 
   await sendEmail(to, subject, text)
 };
