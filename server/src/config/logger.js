@@ -7,7 +7,6 @@ const path = require("path");
 
 const enumerateErrorFormat = format((info) => {
   if (info instanceof Error) {
-    console.log(info.stack);
     Object.assign(info, { message: info.stack });
   }
   return info;
@@ -19,7 +18,8 @@ const logger = createLogger({
     enumerateErrorFormat(),
     config.env === "development" ? colorize() : uncolorize(),
     splat(),
-    timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    // timestamp({ format: "YYYY/MM/DD HH:mm:ss" }),
+    timestamp({ format: "HH:mm:ss" }),
     printf(
       ({ level, message, timestamp, label }) =>
         `${timestamp} : ${level} : ${message}`

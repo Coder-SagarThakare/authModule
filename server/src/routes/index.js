@@ -4,10 +4,6 @@ const router = express.Router();
 const authRoute = require("./auth.route");
 const userRoute = require("./user.route");
 
-router.get("/", (req, res) => {
-  console.log("/ route");
-});
-
 const defaultRoutes = [
   { path: "/auth", route: authRoute }, // base path for auth routes
   { path: "/user", route: userRoute }, // base path for user routes
