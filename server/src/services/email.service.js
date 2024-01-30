@@ -36,9 +36,7 @@ const sendEmail = async (to, subject, text) => {
       break;
 
     case "gmail":
-      const res = await transport.sendMail(msg);
-      console.log(res);
-
+      await transport.sendMail(msg);
       break;
 
     case "smtp":

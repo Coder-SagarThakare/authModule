@@ -41,14 +41,19 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "https://i.imgur.com/CR1iy7U.png",
     },
-    isEmailVerified : {
-      type:Boolean,
-      default : false
-    } ,
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     isPasswordUpdated: {
       type: Boolean,
       default: true,
     },
+    otp: {
+      type: Number,
+      default: -1,
+    },
+    otpGeneratedTime: { type: String, default: undefined },
   },
   {
     timestamps: true,

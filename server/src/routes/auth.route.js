@@ -53,5 +53,10 @@ router.post(
   authController.verifyEmail
 );
 
-router.get('/send-verification-otp',auth(),authController.sendVerificationOTP)
+router.get(
+  "/send-verification-otp",
+  auth(),
+  authController.sendVerificationOTP
+);
+
 module.exports = router;

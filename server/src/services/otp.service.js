@@ -12,7 +12,13 @@ const sendVerificationOTP = async (to) => {
 
   try {
     await sendEmail(to, subject, text);
-    return { success: true, message: "Check otp on your registered mail-id" };
+
+    return {
+      success: true,
+      message: "Check otp on your registered mail-id",
+      otp: otp,
+      otpGeneratedTime : new Date()
+    };
   } catch (e) {
     throw new ApiError("Error while sending mail");
   }

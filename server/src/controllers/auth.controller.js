@@ -4,6 +4,7 @@ const {
   authService,
   emailService,
   otpService,
+  userService,
 } = require("../services");
 const httpStatus = require("http-status");
 
@@ -82,7 +83,15 @@ const verifyEmail = catchAsync(async (req, res) => {
 const sendVerificationOTP = catchAsync(async (req, res) => {
   const response = await otpService.sendVerificationOTP(req.user.email);
 
-  res.status(httpStatus.OK).send(response);
+  if (response.success)
+    await userService.updateUserById(req.user.id, {
+      otp: response.otp,
+      otpGeneratedTime: response.otpGeneratedTime,
+    });
+
+  res
+    .status(httpStatus.OK)
+    .send({ sucess: response.success, message: response.message });
 });
 
 module.exports = {
