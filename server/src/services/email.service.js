@@ -23,7 +23,8 @@ const sendResetPasswordEmail = async (to, token) => {
 
 const sendEmail = async (to, subject, text) => {
   const msg = {
-    from: config.gmail.auth.user,
+    // from: config.gmail.auth.user,
+    from: `Admin@Marathi-Coders <${config.gmail.auth.user}>`,
     to,
     subject,
     html: text,
@@ -35,7 +36,9 @@ const sendEmail = async (to, subject, text) => {
       break;
 
     case "gmail":
-      await transport.sendMail(msg);
+      const res = await transport.sendMail(msg);
+      console.log(res);
+
       break;
 
     case "smtp":
@@ -59,9 +62,9 @@ const transport = (function () {
         service: config.email.provider,
         auth: {
           user: config.gmail.auth.user,
-          pass: config.gmail.auth.pass
-        }
-      })
+          pass: config.gmail.auth.pass,
+        },
+      });
 
       return mailTransporter;
 
@@ -93,12 +96,13 @@ const sendVerificationEmail = async (to, token) => {
   To verify your email click on given link <a href=${verificationUrl}>Verify the Email </a><br>
   If you did not send request for verify email, then ignore this email.</br>
   
-  Beta version : need to update proper siteurl of server <html>`
+  Beta version : need to update proper siteurl of server <html>`;
 
-  await sendEmail(to, subject, text)
+  await sendEmail(to, subject, text);
 };
 
 module.exports = {
   sendResetPasswordEmail,
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendEmail,
 };
