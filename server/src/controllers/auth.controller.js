@@ -81,17 +81,24 @@ const verifyEmail = catchAsync(async (req, res) => {
 });
 
 const sendVerificationOTP = catchAsync(async (req, res) => {
-  const response = await otpService.sendVerificationOTP(req.user.email);
+  const otp = await otpService.sendVerificationOTP(req.user.email);
 
-  if (response.success)
-    await userService.updateUserById(req.user.id, {
-      otp: response.otp,
-      otpGeneratedTime: response.otpGeneratedTime,
-    });
+  await userService.updateUserById(req.user.id, {
+    otp: otp,
+    otpGeneratedTime: new Date(),
+  });
 
   res
     .status(httpStatus.OK)
-    .send({ sucess: response.success, message: response.message });
+    .send({ message: "Check otp on your registered mail-id" });
+});
+
+const verifyOTP = catchAsync(async (req, res) => {
+  await otpService.validateOTP(req.user.id, req.body.otp);
+
+  res
+    .status(httpStatus.OK)
+    .send({ success: true, message: "Email verified successfully !!!" });
 });
 
 module.exports = {
@@ -103,4 +110,5 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   sendVerificationOTP,
+  verifyOTP,
 };

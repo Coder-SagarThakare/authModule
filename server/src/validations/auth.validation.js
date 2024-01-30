@@ -42,11 +42,18 @@ const verifyEmail = {
     token: Joi.string().required(),
   }),
 };
+
+const verifyOTP = {
+  body : Joi.object().keys({
+    otp : Joi.number().required() 
+  })
+}
 module.exports = {
   register,
   login,
   socialLogin,
   forgotPassword,
   resetPassword,
-  verifyEmail
+  verifyEmail,
+  verifyOTP
 };

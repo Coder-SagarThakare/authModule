@@ -1,5 +1,11 @@
+const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 const { sendEmail } = require("./email.service");
+const {
+  getUserById,
+  updateUserById,
+  removeUserFields,
+} = require("./user.service");
 
 const sendVerificationOTP = async (to) => {
   const subject = "OTP Verification";
@@ -13,12 +19,7 @@ const sendVerificationOTP = async (to) => {
   try {
     await sendEmail(to, subject, text);
 
-    return {
-      success: true,
-      message: "Check otp on your registered mail-id",
-      otp: otp,
-      otpGeneratedTime : new Date()
-    };
+    return otp;
   } catch (e) {
     throw new ApiError("Error while sending mail");
   }
@@ -34,6 +35,41 @@ const generateOTP = (length = 6) => {
   return generatedNo < baseValue ? (generatedNo += baseValue) : generatedNo;
 };
 
+// validate otp coming from frontned
+const validateOTP = async (userId, otp) => {
+  const user = await getUserById(userId);
+
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "User not found");
+  }
+
+  const duration = checkDuration(user.otpGeneratedTime);
+
+  if (otp !== user.otp)
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please Enter Valid OTP");
+
+  if (duration > 120)
+    throw new ApiError(httpStatus.BAD_REQUEST, "OTP Expired Generate New OTP ");
+
+  await updateUserById(userId, {
+    isEmailVerified: true,
+    otp: undefined,
+    otpGeneratedTime: undefined,
+  });
+
+  return true;
+};
+
+function checkDuration(otpGeneratedTime) {
+  var currentTime = new Date();
+  otpGeneratedTime = new Date(otpGeneratedTime);
+
+  const duration = (currentTime.getTime() - otpGeneratedTime.getTime()) / 1000;
+
+  return duration;
+}
+
 module.exports = {
   sendVerificationOTP,
+  validateOTP,
 };

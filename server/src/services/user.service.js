@@ -34,12 +34,8 @@ const getUserByEmail = async (email) => {
 const getUserById = (id) => {
   return User.findById(id);
 };
-
+// remove fields is boolean value created for delete otp,otpGeneratedTime field from document
 const updateUserById = async (userId, updateBody) => {
-  console.log(userId);
-
-  console.log(updateBody);
-
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User not found");
@@ -58,4 +54,9 @@ const updateUserById = async (userId, updateBody) => {
   return user;
 };
 
-module.exports = { createUser, getUserByEmail, getUserById, updateUserById };
+module.exports = {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  updateUserById,
+};

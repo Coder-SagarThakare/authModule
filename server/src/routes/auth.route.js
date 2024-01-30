@@ -59,4 +59,6 @@ router.get(
   authController.sendVerificationOTP
 );
 
+router.post("/verify-otp", [validate(authValidation.verifyOTP), auth()], authController.verifyOTP);
+
 module.exports = router;
