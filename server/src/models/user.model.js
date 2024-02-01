@@ -51,7 +51,7 @@ const userSchema = mongoose.Schema(
     },
     otp: {
       type: Number,
-      default: -1,
+      default: undefined,
     },
     otpGeneratedTime: { type: String, default: undefined },
   },
